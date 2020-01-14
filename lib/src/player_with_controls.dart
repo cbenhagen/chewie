@@ -42,12 +42,9 @@ class PlayerWithControls extends StatelessWidget {
       return Stack(
         children: <Widget>[
           chewieController.placeholder ?? Container(),
-          Center(
-            child: AspectRatio(
-              aspectRatio: chewieController.aspectRatio ??
-                  chewieController.videoPlayerController.value.aspectRatio,
-              child: VideoPlayer(chewieController.videoPlayerController),
-            ),
+          CroppedVideo(
+            controller: chewieController.videoPlayerController,
+            cropAspectRatio: chewieController.aspectRatio,
           ),
           chewieController.overlay ?? Container(),
           if (!chewieController.isFullScreen)
@@ -70,5 +67,82 @@ class PlayerWithControls extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class CroppedVideo extends StatefulWidget {
+  const CroppedVideo({
+    Key? key,
+    required this.controller,
+    this.cropAspectRatio,
+  }) : super(key: key);
+
+  final VideoPlayerController controller;
+  final double? cropAspectRatio;
+
+  @override
+  CroppedVideoState createState() => CroppedVideoState();
+}
+
+class CroppedVideoState extends State<CroppedVideo> {
+  VideoPlayerController get controller => widget.controller;
+
+  double? get cropAspectRatio => widget.cropAspectRatio;
+  bool initialized = false;
+
+  late VoidCallback listener;
+
+  @override
+  void initState() {
+    super.initState();
+    _waitForInitialized();
+  }
+
+  @override
+  void didUpdateWidget(CroppedVideo oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != controller) {
+      oldWidget.controller.removeListener(listener);
+      initialized = false;
+      _waitForInitialized();
+    }
+  }
+
+  void _waitForInitialized() {
+    listener = () {
+      if (!mounted) {
+        return;
+      }
+      if (initialized != controller.value.isInitialized) {
+        initialized = controller.value.isInitialized;
+        setState(() {});
+      }
+    };
+    controller.addListener(listener);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (initialized) {
+      return Center(
+        child: AspectRatio(
+          aspectRatio: cropAspectRatio ?? controller.value.aspectRatio,
+          child: FittedBox(
+            fit: BoxFit.cover,
+            clipBehavior: Clip.hardEdge,
+            child: SizedBox(
+              width: controller.value.size.width,
+              height: controller.value.size.height,
+              child: AspectRatio(
+                aspectRatio: controller.value.aspectRatio,
+                child: VideoPlayer(controller),
+              ),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
