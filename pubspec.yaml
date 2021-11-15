@@ -12,6 +12,11 @@ dependencies:
   flutter:
     sdk: flutter
   video_player: ^2.0.0
+  video_player_macos:
+    git:
+      url: git://github.com/cbenhagen/plugins.git
+      ref: video_player_macos_new
+      path: packages/video_player/video_player_macos
   wakelock: ^0.4.0
 
 dev_dependencies:

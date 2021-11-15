@@ -129,6 +129,7 @@ class CroppedVideoState extends State<CroppedVideo> {
           aspectRatio: cropAspectRatio ?? controller.value.aspectRatio,
           child: FittedBox(
             fit: BoxFit.cover,
+            clipBehavior: Clip.hardEdge,
             child: SizedBox(
               width: controller.value.size.width,
               height: controller.value.size.height,
