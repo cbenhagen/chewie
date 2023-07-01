@@ -34,6 +34,7 @@ class _MaterialControlsState extends State<MaterialControls>
 
   late VideoPlayerController controller;
   ChewieController? _chewieController;
+
   // We know that _chewieController is set in didChangeDependencies
   ChewieController get chewieController => _chewieController!;
 
@@ -407,10 +408,13 @@ class _MaterialControlsState extends State<MaterialControls>
           },
           colors: chewieController.materialProgressColors ??
               ChewieProgressColors(
-                  playedColor: Theme.of(context).accentColor,
-                  handleColor: Theme.of(context).accentColor,
-                  bufferedColor: Theme.of(context).backgroundColor,
-                  backgroundColor: Theme.of(context).disabledColor),
+                playedColor: Theme.of(context).colorScheme.secondary,
+                handleColor: Theme.of(context).colorScheme.secondary,
+                bufferedColor:
+                    Theme.of(context).colorScheme.background.withOpacity(0.5),
+                backgroundColor:
+                    Theme.of(context).disabledColor.withOpacity(.5),
+              ),
         ),
       ),
     );
@@ -422,7 +426,7 @@ class _PlaybackSpeedDialog extends StatelessWidget {
     Key? key,
     required List<double> speeds,
     required double selected,
-  })   : _speeds = speeds,
+  })  : _speeds = speeds,
         _selected = selected,
         super(key: key);
 
