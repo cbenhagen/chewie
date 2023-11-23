@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wakelock/wakelock.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 typedef ChewieRoutePageBuilder = Widget Function(
   BuildContext context,
@@ -130,7 +130,7 @@ class ChewieState extends State<Chewie> {
     onEnterFullScreen();
 
     if (!widget.controller.allowedScreenSleep) {
-      Wakelock.enable();
+      WakelockPlus.enable();
     }
 
     await Navigator.of(context, rootNavigator: true).push(route);
@@ -139,7 +139,7 @@ class ChewieState extends State<Chewie> {
 
     // The wakelock plugins checks whether it needs to perform an action internally,
     // so we do not need to check Wakelock.isEnabled.
-    Wakelock.disable();
+    WakelockPlus.disable();
 
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
